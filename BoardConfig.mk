@@ -100,8 +100,8 @@ AB_OTA_UPDATER := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_MAX_BRIGHTNESS := 1023
 TW_DEFAULT_BRIGHTNESS := 420
-TW_Y_OFFSET := 80
-TW_H_OFFSET := -80
+#TW_Y_OFFSET := 80
+#TW_H_OFFSET := -80
 TW_THEME := portrait_hdpi
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
@@ -144,6 +144,8 @@ PLATFORM_VERSION := 16.1.0
 TW_INCLUDE_RESETPROP := true
 
 #SHRP Prop
+# Official 
+SHRP_OFFICIAL := true
 # NOTE - Dont use '-' or blank spaces in flag values , otherwise it will create build errors or other bugs in recovery (Excluding SHRP_PATH,SHRP_REC). 
 # Path of your SHRP Tree
 SHRP_PATH := device/oneplus/enchilada
