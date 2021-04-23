@@ -164,7 +164,7 @@ SHRP_STATUSBAR_LEFT_PADDING := 40
 # For Notch devices [Optional]
 SHRP_NOTCH := true
 # SHRP Express, enables on-the-fly theme patching (also persistent) + persistent lock [Optional]
-SHRP_EXPRESS := true
+#SHRP_EXPRESS := true
 # SHRP Dark mode, use this flag to have dark theme set by default [Optional]
 SHRP_DARK := true
 # put this 0 if device has no EDL mode *
