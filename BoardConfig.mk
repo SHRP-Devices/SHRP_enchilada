@@ -179,3 +179,5 @@ SHRP_FLASH := 1
 SHRP_FLASH_MAX_BRIGHTNESS := 200
 # Use this flag only if your device is A/B *
 SHRP_AB := true
+# Check your device's recovery path, dont use blindly
+SHRP_REC := no_recovery_partition
