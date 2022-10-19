@@ -207,7 +207,7 @@ INC_IN_REC_MAGISK := true
 # Addons will be shown in the "Tweaks" section of SHRP.
 
 # Custom addon folder. Do not forget to put a "/" at the end of the path!
-SHRP_EXTERNAL_ADDON_PATH := "device/oneplus/enchilada/addon/"
+SHRP_EXTERNAL_ADDON_PATH := "device/oneplus/enchilada/addons/"
 # Addon #1 - Name
 SHRP_EXTERNAL_ADDON_1_NAME := "Finalize"
 # Addon #1 - Description
