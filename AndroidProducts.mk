@@ -17,6 +17,6 @@
 #
 
 PRODUCT_MAKEFILES := \
-     $(LOCAL_DIR)/omni_enchilada.mk
-	 
-COMMON_LUNCH_CHOICES := omni_enchilada-eng
+     $(LOCAL_DIR)/twrp_enchilada.mk
+
+COMMON_LUNCH_CHOICES := twrp_enchilada-eng

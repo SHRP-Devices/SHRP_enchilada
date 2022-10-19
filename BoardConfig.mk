@@ -21,6 +21,7 @@ DEVICE_PATH := device/oneplus/enchilada
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
 BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
 # Architecture
 TARGET_ARCH := arm64
@@ -39,9 +40,6 @@ TARGET_2ND_CPU_VARIANT := cortex-a53
 ENABLE_CPUSETS := true
 ENABLE_SCHEDBOOST := true
 
-# GPT Utils
-BOARD_PROVIDES_GPTUTILS := true
-
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := sdm845
 TARGET_NO_BOOTLOADER := true
@@ -53,11 +51,23 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno630
 QCOM_BOARD_PLATFORMS += sdm845
 TARGET_USES_64_BIT_BINDER := true
 TARGET_SUPPORTS_64_BIT_APPS := true
+TARGET_USES_HARDWARE_QCOM_BOOTCTRL := true
+
+#OTA
+TARGET_OTA_ASSERT_DEVICE := OnePlus6,enchilada
 
 # Kernel
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_OFFSET := 0x00008000
+BOARD_RAMDISK_OFFSET := 0x01000000
+BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_BOOT_HEADER_VERSION := 1
+BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a600000.dwc3 firmware_class.path=/vendor/firmware_mnt/image loop.max_part=7
 BOARD_KERNEL_CMDLINE += androidboot.fastboot=1
@@ -69,7 +79,7 @@ BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz-dtb
 #TARGET_KERNEL_SOURCE := kernel/oneplus/sdm845
 #TARGET_KERNEL_CLANG_COMPILE := true
-#TARGET_KERNEL_CLANG_VERSION := r383902b
+#TARGET_KERNEL_CLANG_VERSION := r383902
 #TARGET_KERNEL_CONFIG := enchilada_defconfig
 
 # Partitions
@@ -81,44 +91,43 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 118112366592
 BOARD_VENDORIMAGE_PARTITION_SIZE := 1073741824
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+TARGET_USES_MKE2FS := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_SELECT_BUTTON := true
+BOARD_HAS_NO_REAL_SDCARD := true
 TARGET_NO_KERNEL := false
 TARGET_NO_RECOVERY := true
 BOARD_USES_RECOVERY_AS_BOOT := true
+BOARD_ROOT_EXTRA_FOLDERS := op1 op2 op_odm
 
 # Partitions (listed in the file) to be wiped under recovery.
-TARGET_RECOVERY_WIPE := $(DEVICE_PATH)/recovery.wipe
+TARGET_RECOVERY_WIPE := $(DEVICE_PATH)/recovery/root/system/etc/recovery.wipe
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 
 # Workaround for error copying vendor files to recovery ramdisk
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
 
-# Use mke2fs to create ext4 images
-TARGET_USES_MKE2FS := true
-
 # Crypto
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
-PLATFORM_SECURITY_PATCH := 2099-12-31
-VENDOR_SECURITY_PATCH := 2099-12-31
-PLATFORM_VERSION := 16.1.0
 BOARD_USES_QCOM_FBE_DECRYPTION := true
 BOARD_SUPPRESS_SECURE_ERASE := true
+PLATFORM_VERSION := 16.1.0
+PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+PLATFORM_SECURITY_PATCH := 2127-12-31
+VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+TW_USE_FSCRYPT_POLICY := 1
 
 # TWRP specific build flags
 TW_THEME := portrait_hdpi
-TW_DEVICE_VERSION :=BY SIDDK
-BOARD_HAS_NO_REAL_SDCARD := true
 RECOVERY_SDCARD_ON_DATA := true
 TARGET_RECOVERY_QCOM_RTC_FIX := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_EXCLUDE_SUPERSU := true
 TW_EXTRA_LANGUAGES := true
-TW_INCLUDE_NTFS_3G := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_DEVICE_VERSION :=BY SIDDK
 TW_MAX_BRIGHTNESS := 1023
 TW_DEFAULT_BRIGHTNESS := 420
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
@@ -127,19 +136,25 @@ TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
 TW_USE_LEDS_HAPTICS := true
-USE_RECOVERY_INSTALLER := true
-RECOVERY_INSTALLER_PATH := device/oneplus/enchilada/installer
 TW_EXCLUDE_TWRPAPP := true
 TW_INCLUDE_REPACKTOOLS := true
 TW_HAS_EDL_MODE := true
-TW_NO_USB_STORAGE := true
 TW_INCLUDE_RESETPROP := true
 TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_FUSE_NTFS := true
+TW_OVERRIDE_SYSTEM_PROPS := \
+    "ro.bootimage.build.date.utc=ro.build.date.utc;ro.build.date.utc;ro.odm.build.date.utc=ro.build.date.utc;ro.product.build.date.utc=ro.build.date.utc;ro.system.build.date.utc=ro.build.date.utc;ro.system_ext.build.date.utc=ro.build.date.utc;ro.vendor.build.date.utc=ro.build.date.utc;ro.build.product;ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental;ro.product.name=ro.product.system.name"
 
 # Debug flags
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
+
+TW_QCOM_ATS_OFFSET := 1634734118
+PRODUCT_ENFORCE_VINTF_MANIFEST := true
+
+# Android Verified Boot
+BOARD_AVB_ENABLE := false
+BOARD_BUILD_DISABLED_VBMETAIMAGE := true
 
 #SHRP Prop
 # Official 
@@ -177,3 +192,35 @@ SHRP_FLASH := 1
 SHRP_FLASH_MAX_BRIGHTNESS := 200
 # Use this flag only if your device is A/B *
 SHRP_AB := true
+# Default (if not set) is NOT adding it to the ramdisk but internal storage.
+# To store magisk zip into the recovery ramdisk instead set to "true" here.
+# Ensure you understood the above note on the default behavior!
+INC_IN_REC_MAGISK := true
+
+
+############################ #########################################################
+# CUSTOM ADDONS - OPTIONAL # Custom addons! Yea fully optional but.. GREAT STUFF! :) #
+############################ #########################################################
+
+# SHRP can be extended as YOU wish! You can add whatever you can think of
+# e.g patching a ROM, adding stuff, apps, there is no limit ;)
+# Addons will be shown in the "Tweaks" section of SHRP.
+
+# Custom addon folder. Do not forget to put a "/" at the end of the path!
+SHRP_EXTERNAL_ADDON_PATH := "device/oneplus/enchilada/addon/"
+# Addon #1 - Name
+SHRP_EXTERNAL_ADDON_1_NAME := "Finalize"
+# Addon #1 - Description
+SHRP_EXTERNAL_ADDON_1_INFO := "A script which flashed firmware to both slots"
+# Addon #1 - Addon file name as ZIP (zip format is required)
+SHRP_EXTERNAL_ADDON_1_FILENAME := "Finalize.zip"
+# Addon #1 - Free defineable button text the user need to press to actually install that addon
+# (Examples: Ok, Install, Flask, Enable, Disable, etc)
+SHRP_EXTERNAL_ADDON_1_BTN_TEXT := "Flash"
+# Addon #1 - Text beeing shown when the installation was successful
+SHRP_EXTERNAL_ADDON_1_SUCCESSFUL_TEXT := "Flashed"
+# Addon #1 - Inject the addon into the recovery (if so: be sure that it will fit into the partition)
+# Default (if not set) is NOT adding this addon into the recovery ramdisk. That means:
+# If you do NOT set this the addon will be saved into the internal storage (i.e: $(SHRP_INTERNAL)/SHRP/addons)
+# Set this variable when true ONLY (do not use "false" or similiar)
+SHRP_INC_IN_REC_EXTERNAL_ADDON_1 := true
