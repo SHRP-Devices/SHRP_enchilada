@@ -6,7 +6,7 @@ on:
         description: 'set true if you wanna push Official Build'
         required: false
 env:
-  MANIFEST: "https://github.com/SHRP/manifest.git -b v3_12.1"
+  MANIFEST: "https://github.com/SHRP/manifest.git -b shrp-12.1"
   # Recovery Manifest URL with -b branch
   DT_LINK: "https://github.com/SHRP-Devices/device_oneplus_enchilada"
   # Your Device Tree Link
